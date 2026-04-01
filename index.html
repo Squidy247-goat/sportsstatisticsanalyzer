@@ -91,22 +91,16 @@
                     <option value="Spring 2027">Spring 2027</option>
                 </select>
 
+                <label class="upload-label">Import Roster</label>
                 <div id="upload-zone" class="upload-zone">
-                    <p>Drag & drop a CSV file here</p>
-                    <p class="upload-hint">or click to browse</p>
-                    <input type="file" id="roster-file" accept=".csv" hidden>
-                </div>
-
-                <div class="divider"><span>or import from screenshot</span></div>
-
-                <div class="screenshot-import">
-                    <input type="password" id="groq-api-key" placeholder="Groq API Key" autocomplete="off">
-                    <button type="button" id="screenshot-upload-btn" class="btn btn-primary screenshot-btn">
-                        Upload Roster Screenshot
-                    </button>
+                    <span class="upload-icon">&#128247;</span>
+                    <p>Upload a screenshot of your roster</p>
+                    <p class="upload-hint">Name, number, position, grade</p>
                     <input type="file" id="screenshot-file" accept="image/*" hidden>
-                    <p id="screenshot-status" class="screenshot-status"></p>
                 </div>
+                <p id="screenshot-status" class="screenshot-status"></p>
+                <p class="upload-alt">or <a href="#" id="csv-upload-link">import from CSV</a></p>
+                <input type="file" id="roster-file" accept=".csv" hidden>
 
                 <div id="roster-preview" class="roster-preview hidden">
                     <h3>Roster Preview</h3>
@@ -168,6 +162,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="js/config.js"></script>
     <script src="js/app.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/sportSelect.js"></script>

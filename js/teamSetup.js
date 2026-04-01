@@ -3,19 +3,18 @@
     const teamNameInput = document.getElementById('team-name');
     const seasonSelect = document.getElementById('season-select');
     const uploadZone = document.getElementById('upload-zone');
-    const rosterFileInput = document.getElementById('roster-file');
     const screenshotFileInput = document.getElementById('screenshot-file');
-    const apiKeyInput = document.getElementById('groq-api-key');
-    const screenshotBtn = document.getElementById('screenshot-upload-btn');
+    const csvFileInput = document.getElementById('roster-file');
+    const csvLink = document.getElementById('csv-upload-link');
     const screenshotStatus = document.getElementById('screenshot-status');
     const rosterPreview = document.getElementById('roster-preview');
     const rosterTbody = document.querySelector('#roster-table tbody');
     const continueBtn = document.getElementById('continue-dashboard-btn');
 
-    let pendingRoster = []; // players waiting to be confirmed
+    let pendingRoster = [];
 
-    // ===== CSV Upload (drag-drop & click) =====
-    uploadZone.addEventListener('click', () => rosterFileInput.click());
+    // ===== Screenshot Upload (primary) =====
+    uploadZone.addEventListener('click', () => screenshotFileInput.click());
 
     uploadZone.addEventListener('dragover', (e) => {
         e.preventDefault();
@@ -33,13 +32,48 @@
         uploadZone.style.borderColor = '';
         uploadZone.style.background = '';
         const file = e.dataTransfer.files[0];
-        if (file && file.name.endsWith('.csv')) {
-            parseCSV(file);
+        if (file && file.type.startsWith('image/')) {
+            processScreenshot(file);
         }
     });
 
-    rosterFileInput.addEventListener('change', () => {
-        if (rosterFileInput.files[0]) parseCSV(rosterFileInput.files[0]);
+    screenshotFileInput.addEventListener('change', () => {
+        if (screenshotFileInput.files[0]) {
+            processScreenshot(screenshotFileInput.files[0]);
+        }
+    });
+
+    async function processScreenshot(file) {
+        screenshotStatus.textContent = 'Analyzing roster screenshot...';
+        screenshotStatus.className = 'screenshot-status loading';
+
+        const { players, error } = await parseRosterFromScreenshot(file, ENV.GROQ_API_KEY, appState.sport);
+
+        if (error) {
+            screenshotStatus.textContent = error.message;
+            screenshotStatus.className = 'screenshot-status error';
+            return;
+        }
+
+        if (players.length === 0) {
+            screenshotStatus.textContent = 'No players found. Try a clearer screenshot.';
+            screenshotStatus.className = 'screenshot-status error';
+            return;
+        }
+
+        screenshotStatus.textContent = `Found ${players.length} player${players.length !== 1 ? 's' : ''}!`;
+        screenshotStatus.className = 'screenshot-status success';
+        loadRosterPreview(players);
+    }
+
+    // ===== CSV Upload (secondary) =====
+    csvLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        csvFileInput.click();
+    });
+
+    csvFileInput.addEventListener('change', () => {
+        if (csvFileInput.files[0]) parseCSV(csvFileInput.files[0]);
     });
 
     function parseCSV(file) {
@@ -47,7 +81,6 @@
         reader.onload = (e) => {
             const lines = e.target.result.split('\n').filter(l => l.trim());
             const players = [];
-            // Skip header if it looks like one
             const start = /^name/i.test(lines[0]) ? 1 : 0;
             for (let i = start; i < lines.length; i++) {
                 const cols = lines[i].split(',').map(c => c.trim());
@@ -63,45 +96,6 @@
         };
         reader.readAsText(file);
     }
-
-    // ===== Screenshot Upload =====
-    screenshotBtn.addEventListener('click', () => screenshotFileInput.click());
-
-    screenshotFileInput.addEventListener('change', async () => {
-        const file = screenshotFileInput.files[0];
-        if (!file) return;
-
-        const apiKey = apiKeyInput.value.trim();
-        if (!apiKey) {
-            screenshotStatus.textContent = 'Please enter your Groq API key first.';
-            screenshotStatus.className = 'screenshot-status error';
-            return;
-        }
-
-        screenshotStatus.textContent = 'Analyzing screenshot...';
-        screenshotStatus.className = 'screenshot-status loading';
-        screenshotBtn.disabled = true;
-
-        const { players, error } = await parseRosterFromScreenshot(file, apiKey, appState.sport);
-
-        screenshotBtn.disabled = false;
-
-        if (error) {
-            screenshotStatus.textContent = 'Error: ' + error.message;
-            screenshotStatus.className = 'screenshot-status error';
-            return;
-        }
-
-        if (players.length === 0) {
-            screenshotStatus.textContent = 'No players found in the screenshot. Try a clearer image.';
-            screenshotStatus.className = 'screenshot-status error';
-            return;
-        }
-
-        screenshotStatus.textContent = `Found ${players.length} player${players.length !== 1 ? 's' : ''}!`;
-        screenshotStatus.className = 'screenshot-status success';
-        loadRosterPreview(players);
-    });
 
     // ===== Roster Preview =====
     function loadRosterPreview(players) {
@@ -125,7 +119,6 @@
             rosterTbody.appendChild(tr);
         });
 
-        // Attach remove handlers
         rosterTbody.querySelectorAll('.remove-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 pendingRoster.splice(Number(btn.dataset.idx), 1);
@@ -160,7 +153,6 @@
         appState.roster = pendingRoster;
         saveState();
 
-        // Update dashboard header
         document.getElementById('dashboard-team-name').textContent = appState.teamName;
         document.getElementById('dashboard-sport-badge').textContent = appState.sport;
 
