@@ -44,7 +44,7 @@ submitBtn.addEventListener('click', () => {
     } else {
         if (users[email] && users[email] === pass) {
             alert("Login successful!");
-            // window.location.href = "sports-choice.html"; // Redirect here
+            // window.'location.href = "sports-choice.html"; // Redirect here
         } else {
             alert("Invalid email or password!");
         }
