@@ -316,6 +316,50 @@ a {
     margin-top: 0.25rem;
 }
 
+/* Screenshot Import */
+.screenshot-import {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.screenshot-import input[type="password"] {
+    padding: 0.75rem 1rem;
+    background: #161b22;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: #e6edf3;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.screenshot-import input[type="password"]:focus {
+    border-color: #9200e6;
+}
+
+.screenshot-btn {
+    width: 100%;
+}
+
+.screenshot-status {
+    font-size: 0.85rem;
+    min-height: 1.2em;
+    text-align: center;
+}
+
+.screenshot-status.loading {
+    color: #8b949e;
+}
+
+.screenshot-status.error {
+    color: #f85149;
+}
+
+.screenshot-status.success {
+    color: #3fb950;
+}
+
 /* Roster Preview Table */
 .roster-preview {
     margin-top: 0.5rem;

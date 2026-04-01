@@ -97,6 +97,17 @@
                     <input type="file" id="roster-file" accept=".csv" hidden>
                 </div>
 
+                <div class="divider"><span>or import from screenshot</span></div>
+
+                <div class="screenshot-import">
+                    <input type="password" id="groq-api-key" placeholder="Groq API Key" autocomplete="off">
+                    <button type="button" id="screenshot-upload-btn" class="btn btn-primary screenshot-btn">
+                        Upload Roster Screenshot
+                    </button>
+                    <input type="file" id="screenshot-file" accept="image/*" hidden>
+                    <p id="screenshot-status" class="screenshot-status"></p>
+                </div>
+
                 <div id="roster-preview" class="roster-preview hidden">
                     <h3>Roster Preview</h3>
                     <table id="roster-table">
@@ -160,6 +171,7 @@
     <script src="js/app.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/sportSelect.js"></script>
+    <script src="js/rosterParser.js"></script>
     <script src="js/teamSetup.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/gameLog.js"></script>
