@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In UI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-card">
+        <div class="user-icon">👤</div>
+        <h1>Welcome back</h1>
+        <p class="subtitle">Sign in to your account</p>
+
+        <div class="tab-container">
+            <button class="tab active" id="signInTab">Sign in</button>
+            <button class="tab" id="signUpTab">Sign up</button>
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="email" placeholder="you@example.com">
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="••••••••">
+        </div>
+
+        <button class="primary-btn" id="submitBtn">Sign in</button>
+
+        <div class="separator">
+            <hr><span>or</span><hr>
+        </div>
+
+        <button class="google-btn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Logo.svg" alt="Google">
+            Continue with Google
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

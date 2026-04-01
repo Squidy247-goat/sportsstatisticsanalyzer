@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StatEdge</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Nav Bar (hidden until logged in) -->
+    <nav id="nav-bar">
+        <div class="nav-brand">StatEdge</div>
+        <div class="nav-links">
+            <a href="#" data-tab="game-log" class="nav-link active">Game Log</a>
+            <a href="#" data-tab="season-overview" class="nav-link">Season</a>
+            <a href="#" data-tab="share-link" class="nav-link">Share</a>
+            <a href="#" data-tab="ml-insights" class="nav-link">Insights</a>
+            <a href="#" data-tab="scouting" class="nav-link">Scouting</a>
+            <a href="#" data-tab="tactics" class="nav-link">Tactics</a>
+        </div>
+        <button id="logout-btn" class="btn btn-small">Log Out</button>
+    </nav>
+
+    <!-- Screen: Auth -->
+    <div id="screen-auth" class="screen active">
+        <div class="auth-container">
+            <h1 class="logo">StatEdge</h1>
+            <p class="tagline">High School Sports Analytics</p>
+
+            <div class="auth-toggle">
+                <button id="toggle-signin" class="auth-toggle-btn active">Sign In</button>
+                <button id="toggle-signup" class="auth-toggle-btn">Sign Up</button>
+            </div>
+
+            <!-- Sign In Form -->
+            <form id="form-signin" class="auth-form">
+                <input type="email" id="signin-email" placeholder="Email" required>
+                <input type="password" id="signin-password" placeholder="Password" required>
+                <p id="signin-error" class="error-msg"></p>
+                <button type="submit" class="btn btn-primary">Sign In</button>
+            </form>
+
+            <!-- Sign Up Form (hidden by default) -->
+            <form id="form-signup" class="auth-form hidden">
+                <input type="email" id="signup-email" placeholder="Email" required>
+                <input type="password" id="signup-password" placeholder="Password" required>
+                <input type="password" id="signup-confirm" placeholder="Confirm Password" required>
+                <p id="signup-error" class="error-msg"></p>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </form>
+
+            <div class="divider"><span>or</span></div>
+
+            <button id="google-signin-btn" class="btn btn-google">Sign in with Google (Simulated)</button>
+        </div>
+    </div>
+
+    <!-- Screen: Sport Selection -->
+    <div id="screen-sport" class="screen">
+        <div class="sport-container">
+            <h2>Choose Your Sport</h2>
+            <p class="subtitle">Select the sport your team plays</p>
+            <div class="sport-cards">
+                <div class="sport-card" data-sport="soccer">
+                    <span class="sport-icon">&#9917;</span>
+                    <h3>Soccer</h3>
+                </div>
+                <div class="sport-card" data-sport="football">
+                    <span class="sport-icon">&#127944;</span>
+                    <h3>Football</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen: Team Setup -->
+    <div id="screen-setup" class="screen">
+        <div class="setup-container">
+            <h2>Team Setup</h2>
+            <p class="subtitle">Configure your team and import your roster</p>
+
+            <div class="setup-form">
+                <input type="text" id="team-name" placeholder="Team Name" required>
+
+                <select id="season-select">
+                    <option value="" disabled selected>Select Season</option>
+                    <option value="Fall 2025">Fall 2025</option>
+                    <option value="Spring 2026">Spring 2026</option>
+                    <option value="Fall 2026">Fall 2026</option>
+                    <option value="Spring 2027">Spring 2027</option>
+                </select>
+
+                <div id="upload-zone" class="upload-zone">
+                    <p>Drag & drop a CSV file here</p>
+                    <p class="upload-hint">or click to browse</p>
+                    <input type="file" id="roster-file" accept=".csv" hidden>
+                </div>
+
+                <div id="roster-preview" class="roster-preview hidden">
+                    <h3>Roster Preview</h3>
+                    <table id="roster-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Number</th>
+                                <th>Position</th>
+                                <th>Grade</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <button id="continue-dashboard-btn" class="btn btn-primary" disabled>Continue to Dashboard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen: Dashboard -->
+    <div id="screen-dashboard" class="screen">
+        <div class="dashboard-header">
+            <h2 id="dashboard-team-name">Team Name</h2>
+            <span id="dashboard-sport-badge" class="sport-badge">Sport</span>
+        </div>
+
+        <div id="dashboard-tabs" class="dashboard-tabs">
+            <button class="tab-btn active" data-tab="game-log">Game Log</button>
+            <button class="tab-btn" data-tab="season-overview">Season Overview</button>
+            <button class="tab-btn" data-tab="share-link">Share</button>
+            <button class="tab-btn" data-tab="ml-insights">ML Insights</button>
+            <button class="tab-btn" data-tab="scouting">Scouting</button>
+            <button class="tab-btn" data-tab="tactics">Tactics</button>
+        </div>
+
+        <div class="tab-content">
+            <div id="tab-game-log" class="tab-panel active">
+                <p class="empty-state">No games yet — add your first game!</p>
+            </div>
+            <div id="tab-season-overview" class="tab-panel">
+                <p class="empty-state">Play some games to see your season stats.</p>
+            </div>
+            <div id="tab-share-link" class="tab-panel">
+                <p class="empty-state">Generate a link to share your stats.</p>
+            </div>
+            <div id="tab-ml-insights" class="tab-panel">
+                <p class="empty-state">Not enough data — play at least 3 games.</p>
+            </div>
+            <div id="tab-scouting" class="tab-panel">
+                <p class="empty-state">Add opponent data to start scouting.</p>
+            </div>
+            <div id="tab-tactics" class="tab-panel">
+                <p class="empty-state">Scout an opponent to generate tactics.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/sportSelect.js"></script>
+    <script src="js/teamSetup.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/gameLog.js"></script>
+    <script src="js/seasonOverview.js"></script>
+    <script src="js/shareLink.js"></script>
+    <script src="js/mlInsights.js"></script>
+    <script src="js/scouting.js"></script>
+    <script src="js/tactics.js"></script>
+</body>
+</html>
