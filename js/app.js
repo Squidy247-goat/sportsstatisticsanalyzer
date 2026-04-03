@@ -69,11 +69,16 @@ function switchTab(tabName) {
 // ===== Logout =====
 function initLogout() {
     document.getElementById('logout-btn').addEventListener('click', async () => {
-        await supabaseClient.auth.signOut();
+        try {
+            await supabaseClient.auth.signOut();
+        } catch (e) {
+            console.error('Sign out error:', e);
+        }
         appState = {
             user: null, sport: null, teamName: '', season: '',
             roster: [], games: [], opponents: []
         };
+        localStorage.removeItem('statEdgeData');
         hideNav();
         showScreen('screen-auth');
     });
