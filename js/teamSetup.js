@@ -1,4 +1,6 @@
 // Team setup & roster import logic — Phase 4
+
+// Team setup & roster import logic — Phase 4
 (function () {
     const teamNameInput = document.getElementById('team-name');
     const seasonSelect = document.getElementById('season-select');
