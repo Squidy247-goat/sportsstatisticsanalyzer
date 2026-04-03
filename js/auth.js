@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         errorEl.textContent = 'Signing in...';
 
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
             email,
             password
         });
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         errorEl.textContent = 'Creating account...';
 
-        const { data, error } = await supabase.auth.signUp({
+        const { data, error } = await supabaseClient.auth.signUp({
             email,
             password
         });
@@ -103,14 +103,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ===== Google Sign-In =====
     document.getElementById('google-signin-btn').addEventListener('click', async () => {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: window.location.origin + window.location.pathname
+        try {
+            const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin + window.location.pathname
+                }
+            });
+            console.log('OAuth response:', { data, error });
+            if (error) {
+                alert('Google Sign-In error: ' + error.message);
             }
-        });
-        if (error) {
-            document.getElementById('signin-error').textContent = error.message;
+        } catch (err) {
+            console.error('Google Sign-In exception:', err);
+            alert('Google Sign-In failed: ' + err.message);
         }
     });
 });

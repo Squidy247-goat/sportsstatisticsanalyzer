@@ -1,5 +1,6 @@
 // ===== Supabase Client =====
-const supabase = window.supabase.createClient(ENV.SUPABASE_URL, ENV.SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(ENV.SUPABASE_URL, ENV.SUPABASE_ANON_KEY);
+// Use supabaseClient everywhere to avoid conflict with the CDN's global 'supabase'
 
 // ===== Global App State =====
 let appState = {
@@ -68,7 +69,7 @@ function switchTab(tabName) {
 // ===== Logout =====
 function initLogout() {
     document.getElementById('logout-btn').addEventListener('click', async () => {
-        await supabase.auth.signOut();
+        await supabaseClient.auth.signOut();
         appState = {
             user: null, sport: null, teamName: '', season: '',
             roster: [], games: [], opponents: []
@@ -84,9 +85,9 @@ async function saveState() {
     localStorage.setItem('statEdgeData', JSON.stringify(appState));
 
     // Sync to Supabase if logged in
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await supabaseClient.auth.getUser();
     if (user) {
-        await supabase.from('user_profiles').upsert({
+        await supabaseClient.from('user_profiles').upsert({
             id: user.id,
             email: user.email,
             sport: appState.sport,
@@ -102,7 +103,7 @@ async function saveState() {
 
 async function loadState() {
     // Try loading from Supabase first
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await supabaseClient.auth.getUser();
     if (user) {
         const { data } = await supabase
             .from('user_profiles')
@@ -142,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadState();
 
     // If user has an active Supabase session, restore
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabaseClientClient.auth.getSession();
     if (session && appState.sport && appState.teamName) {
         showNav();
         document.getElementById('dashboard-team-name').textContent = appState.teamName;
