@@ -1,3 +1,6 @@
+// ===== Supabase Client =====
+const supabase = window.supabase.createClient(ENV.SUPABASE_URL, ENV.SUPABASE_ANON_KEY);
+
 // ===== Global App State =====
 let appState = {
     user: null,          // logged-in user email
@@ -64,19 +67,63 @@ function switchTab(tabName) {
 
 // ===== Logout =====
 function initLogout() {
-    document.getElementById('logout-btn').addEventListener('click', () => {
-        appState.user = null;
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        appState = {
+            user: null, sport: null, teamName: '', season: '',
+            roster: [], games: [], opponents: []
+        };
         hideNav();
         showScreen('screen-auth');
     });
 }
 
-// ===== Save / Load State (localStorage) =====
-function saveState() {
+// ===== Save / Load State (Supabase) =====
+async function saveState() {
+    // Always keep localStorage as a fast cache
     localStorage.setItem('statEdgeData', JSON.stringify(appState));
+
+    // Sync to Supabase if logged in
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+        await supabase.from('user_profiles').upsert({
+            id: user.id,
+            email: user.email,
+            sport: appState.sport,
+            team_name: appState.teamName,
+            season: appState.season,
+            roster: appState.roster,
+            games: appState.games,
+            opponents: appState.opponents,
+            updated_at: new Date().toISOString()
+        });
+    }
 }
 
-function loadState() {
+async function loadState() {
+    // Try loading from Supabase first
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+        const { data } = await supabase
+            .from('user_profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+        if (data) {
+            appState.user = data.email;
+            appState.sport = data.sport;
+            appState.teamName = data.team_name || '';
+            appState.season = data.season || '';
+            appState.roster = data.roster || [];
+            appState.games = data.games || [];
+            appState.opponents = data.opponents || [];
+            localStorage.setItem('statEdgeData', JSON.stringify(appState));
+            return;
+        }
+    }
+
+    // Fall back to localStorage cache
     const saved = localStorage.getItem('statEdgeData');
     if (saved) {
         try {
@@ -88,17 +135,22 @@ function loadState() {
 }
 
 // ===== Init on Page Load =====
-document.addEventListener('DOMContentLoaded', () => {
-    loadState();
+document.addEventListener('DOMContentLoaded', async () => {
     initDashboardTabs();
     initLogout();
 
-    // If user was previously logged in, restore their session
-    if (appState.user && appState.sport && appState.teamName) {
+    await loadState();
+
+    // If user has an active Supabase session, restore
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session && appState.sport && appState.teamName) {
         showNav();
         document.getElementById('dashboard-team-name').textContent = appState.teamName;
         document.getElementById('dashboard-sport-badge').textContent = appState.sport;
         showScreen('screen-dashboard');
+    } else if (session && appState.user) {
+        showNav();
+        showScreen('screen-sport');
     } else {
         showScreen('screen-auth');
     }

@@ -1,7 +1,4 @@
-// ===== Auth Logic =====
-
-// Load existing users from localStorage
-let users = JSON.parse(localStorage.getItem('statEdgeUsers')) || {};
+// ===== Auth Logic (Supabase) =====
 
 document.addEventListener('DOMContentLoaded', () => {
     const toggleSignIn = document.getElementById('toggle-signin');
@@ -27,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ===== Sign In =====
-    formSignIn.addEventListener('submit', (e) => {
+    formSignIn.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('signin-email').value.trim();
         const password = document.getElementById('signin-password').value;
@@ -38,22 +35,23 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!users[email]) {
-            errorEl.textContent = 'No account found with that email.';
+        errorEl.textContent = 'Signing in...';
+
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+
+        if (error) {
+            errorEl.textContent = error.message;
             return;
         }
 
-        if (users[email] !== password) {
-            errorEl.textContent = 'Wrong password. Try again.';
-            return;
-        }
-
-        // Success
-        loginUser(email);
+        await loginUser(data.user.email);
     });
 
     // ===== Sign Up =====
-    formSignUp.addEventListener('submit', (e) => {
+    formSignUp.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('signup-email').value.trim();
         const password = document.getElementById('signup-password').value;
@@ -75,29 +73,53 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (users[email]) {
-            errorEl.textContent = 'An account with that email already exists.';
+        errorEl.textContent = 'Creating account...';
+
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password
+        });
+
+        if (error) {
+            errorEl.textContent = error.message;
             return;
         }
 
-        // Create account
-        users[email] = password;
-        localStorage.setItem('statEdgeUsers', JSON.stringify(users));
-
-        // Auto-login after sign up
-        loginUser(email);
+        // Supabase may require email confirmation depending on project settings.
+        // If email confirmation is enabled, the user object exists but session may be null.
+        if (data.session) {
+            await loginUser(data.user.email);
+        } else {
+            errorEl.textContent = '';
+            errorEl.style.color = '#4ade80';
+            errorEl.textContent = 'Check your email to confirm your account, then sign in.';
+            errorEl.style.color = '';
+            // Switch to sign in form
+            toggleSignIn.click();
+            document.getElementById('signin-error').style.color = '#4ade80';
+            document.getElementById('signin-error').textContent = 'Account created! Check your email to confirm, then sign in.';
+        }
     });
 
-    // ===== Google Sign-In (Simulated) =====
-    document.getElementById('google-signin-btn').addEventListener('click', () => {
-        loginUser('demo@google.com');
+    // ===== Google Sign-In =====
+    document.getElementById('google-signin-btn').addEventListener('click', async () => {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + window.location.pathname
+            }
+        });
+        if (error) {
+            document.getElementById('signin-error').textContent = error.message;
+        }
     });
 });
 
 // ===== Login Helper =====
-function loginUser(email) {
+async function loginUser(email) {
     appState.user = email;
-    saveState();
+    await loadState();
+    appState.user = email;
     clearErrors();
     clearForms();
     showNav();
@@ -114,8 +136,12 @@ function loginUser(email) {
 
 // ===== Utility =====
 function clearErrors() {
-    document.getElementById('signin-error').textContent = '';
-    document.getElementById('signup-error').textContent = '';
+    const signinErr = document.getElementById('signin-error');
+    const signupErr = document.getElementById('signup-error');
+    signinErr.textContent = '';
+    signinErr.style.color = '';
+    signupErr.textContent = '';
+    signupErr.style.color = '';
 }
 
 function clearForms() {
