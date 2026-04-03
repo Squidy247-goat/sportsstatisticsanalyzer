@@ -6,8 +6,6 @@
     const seasonSelect = document.getElementById('season-select');
     const uploadZone = document.getElementById('upload-zone');
     const screenshotFileInput = document.getElementById('screenshot-file');
-    const csvFileInput = document.getElementById('roster-file');
-    const csvLink = document.getElementById('csv-upload-link');
     const screenshotStatus = document.getElementById('screenshot-status');
     const rosterPreview = document.getElementById('roster-preview');
     const rosterTbody = document.querySelector('#roster-table tbody');
@@ -68,37 +66,6 @@
         loadRosterPreview(players);
     }
 
-    // ===== CSV Upload (secondary) =====
-    csvLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        csvFileInput.click();
-    });
-
-    csvFileInput.addEventListener('change', () => {
-        if (csvFileInput.files[0]) parseCSV(csvFileInput.files[0]);
-    });
-
-    function parseCSV(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const lines = e.target.result.split('\n').filter(l => l.trim());
-            const players = [];
-            const start = /^name/i.test(lines[0]) ? 1 : 0;
-            for (let i = start; i < lines.length; i++) {
-                const cols = lines[i].split(',').map(c => c.trim());
-                if (!cols[0]) continue;
-                players.push({
-                    name: cols[0] || '',
-                    number: (cols[1] || '').replace(/[^\d]/g, ''),
-                    position: cols[2] || '',
-                    grade: cols[3] || '',
-                });
-            }
-            loadRosterPreview(players);
-        };
-        reader.readAsText(file);
-    }
-
     // ===== Roster Preview =====
     function loadRosterPreview(players) {
         pendingRoster = players;
@@ -142,23 +109,20 @@
     seasonSelect.addEventListener('change', validateForm);
 
     function validateForm() {
-        const valid = teamNameInput.value.trim() &&
-            seasonSelect.value &&
-            pendingRoster.length > 0;
-        continueBtn.disabled = !valid;
+        const hasName = teamNameInput.value.trim().length > 0;
+        const hasSeason = seasonSelect.value && seasonSelect.value !== '';
+        const hasRoster = pendingRoster.length > 0;
+        continueBtn.disabled = !(hasName && hasSeason && hasRoster);
+        console.log('Validate:', { hasName, hasSeason, hasRoster, disabled: continueBtn.disabled });
     }
 
     // ===== Continue to Dashboard =====
-    continueBtn.addEventListener('click', () => {
+    continueBtn.addEventListener('click', async () => {
         appState.teamName = teamNameInput.value.trim();
         appState.season = seasonSelect.value;
         appState.roster = pendingRoster;
-        saveState();
-
-        document.getElementById('dashboard-team-name').textContent = appState.teamName;
-        document.getElementById('dashboard-sport-badge').textContent = appState.sport;
-
+        await saveState();
         showNav();
-        showScreen('screen-dashboard');
+        showDashboard();
     });
 })();

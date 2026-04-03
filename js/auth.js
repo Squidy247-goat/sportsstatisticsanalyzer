@@ -132,9 +132,7 @@ async function loginUser(email) {
 
     // Go to sport selection if no sport chosen yet, otherwise dashboard
     if (appState.sport && appState.teamName) {
-        document.getElementById('dashboard-team-name').textContent = appState.teamName;
-        document.getElementById('dashboard-sport-badge').textContent = appState.sport;
-        showScreen('screen-dashboard');
+        showDashboard();
     } else {
         showScreen('screen-sport');
     }

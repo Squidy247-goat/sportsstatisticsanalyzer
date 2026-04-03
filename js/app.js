@@ -135,25 +135,31 @@ async function loadState() {
     }
 }
 
-// ===== Handle session and route user to correct screen =====
-async function routeUser() {
-    await loadState();
-
-    const { data: { session } } = await supabaseClient.auth.getSession();
+// ===== Route user to the correct screen based on session + data =====
+async function routeUser(session) {
     if (session) {
         appState.user = session.user.email;
+        await loadState();
+        appState.user = session.user.email;
+
         if (appState.sport && appState.teamName) {
             showNav();
-            document.getElementById('dashboard-team-name').textContent = appState.teamName;
-            document.getElementById('dashboard-sport-badge').textContent = appState.sport;
-            showScreen('screen-dashboard');
+            showDashboard();
         } else {
             showNav();
             showScreen('screen-sport');
         }
     } else {
+        hideNav();
         showScreen('screen-auth');
     }
+}
+
+function showDashboard() {
+    document.getElementById('dashboard-team-name').textContent = appState.teamName;
+    document.getElementById('dashboard-sport-badge').textContent = appState.sport;
+    showScreen('screen-dashboard');
+    renderDashboardRoster();
 }
 
 // ===== Init on Page Load =====
@@ -161,21 +167,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     initDashboardTabs();
     initLogout();
 
-    // Listen for auth state changes (handles OAuth redirect, sign in, sign out)
-    supabaseClient.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-            appState.user = session.user.email;
-            await loadState();
-            appState.user = session.user.email;
-            showNav();
+    // Check for existing session on page load
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    await routeUser(session);
 
-            if (appState.sport && appState.teamName) {
-                document.getElementById('dashboard-team-name').textContent = appState.teamName;
-                document.getElementById('dashboard-sport-badge').textContent = appState.sport;
-                showScreen('screen-dashboard');
-            } else {
-                showScreen('screen-sport');
-            }
+    // Listen for future auth changes (OAuth redirect, sign in/out)
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN') {
+            await routeUser(session);
         } else if (event === 'SIGNED_OUT') {
             appState = {
                 user: null, sport: null, teamName: '', season: '',
@@ -185,7 +184,4 @@ document.addEventListener('DOMContentLoaded', async () => {
             showScreen('screen-auth');
         }
     });
-
-    // Initial route on page load
-    await routeUser();
 });

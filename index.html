@@ -13,6 +13,7 @@
         <div class="nav-brand">StatEdge</div>
         <div class="nav-links">
             <a href="#" data-tab="game-log" class="nav-link active">Game Log</a>
+            <a href="#" data-tab="roster" class="nav-link">Roster</a>
             <a href="#" data-tab="season-overview" class="nav-link">Season</a>
             <a href="#" data-tab="share-link" class="nav-link">Share</a>
             <a href="#" data-tab="ml-insights" class="nav-link">Insights</a>
@@ -91,11 +92,14 @@
                     <option value="Spring 2027">Spring 2027</option>
                 </select>
 
+                <label class="upload-label">Import Roster</label>
                 <div id="upload-zone" class="upload-zone">
-                    <p>Drag & drop a CSV file here</p>
-                    <p class="upload-hint">or click to browse</p>
-                    <input type="file" id="roster-file" accept=".csv" hidden>
+                    <span class="upload-icon">&#128247;</span>
+                    <p>Upload a screenshot of your roster</p>
+                    <p class="upload-hint">Name, number, position, grade</p>
+                    <input type="file" id="screenshot-file" accept="image/*" hidden>
                 </div>
+                <p id="screenshot-status" class="screenshot-status"></p>
 
                 <div id="roster-preview" class="roster-preview hidden">
                     <h3>Roster Preview</h3>
@@ -127,6 +131,7 @@
 
         <div id="dashboard-tabs" class="dashboard-tabs">
             <button class="tab-btn active" data-tab="game-log">Game Log</button>
+            <button class="tab-btn" data-tab="roster">Roster</button>
             <button class="tab-btn" data-tab="season-overview">Season Overview</button>
             <button class="tab-btn" data-tab="share-link">Share</button>
             <button class="tab-btn" data-tab="ml-insights">ML Insights</button>
@@ -137,6 +142,23 @@
         <div class="tab-content">
             <div id="tab-game-log" class="tab-panel active">
                 <p class="empty-state">No games yet — add your first game!</p>
+            </div>
+            <div id="tab-roster" class="tab-panel">
+                <div class="roster-tab-header">
+                    <h3>Team Roster</h3>
+                    <span id="roster-count" class="roster-count"></span>
+                </div>
+                <table class="roster-tab-table" id="dashboard-roster-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
             <div id="tab-season-overview" class="tab-panel">
                 <p class="empty-state">Play some games to see your season stats.</p>
@@ -162,6 +184,7 @@
     <script src="js/app.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/sportSelect.js"></script>
+    <script src="js/rosterParser.js"></script>
     <script src="js/teamSetup.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/gameLog.js"></script>

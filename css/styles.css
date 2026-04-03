@@ -296,6 +296,15 @@ a {
     background: #161b22;
 }
 
+/* Upload Zone */
+.upload-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #8b949e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .upload-zone {
     border: 2px dashed rgba(255, 255, 255, 0.15);
     border-radius: 12px;
@@ -310,21 +319,6 @@ a {
     background: rgba(146, 0, 230, 0.05);
 }
 
-.upload-hint {
-    color: #8b949e;
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
-}
-
-/* Upload Zone */
-.upload-label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #8b949e;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
 .upload-icon {
     font-size: 2.5rem;
     display: block;
@@ -332,20 +326,10 @@ a {
     opacity: 0.7;
 }
 
-.upload-alt {
-    font-size: 0.85rem;
-    color: #484f58;
-    text-align: center;
-}
-
-.upload-alt a {
+.upload-hint {
     color: #8b949e;
-    text-decoration: underline;
-    transition: color 0.2s;
-}
-
-.upload-alt a:hover {
-    color: #e6edf3;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
 }
 
 /* Screenshot Status */
@@ -377,19 +361,23 @@ a {
     font-size: 1rem;
 }
 
-#roster-table {
+#roster-table,
+.roster-tab-table {
     width: 100%;
     border-collapse: collapse;
 }
 
 #roster-table th,
-#roster-table td {
+#roster-table td,
+.roster-tab-table th,
+.roster-tab-table td {
     padding: 0.5rem 0.75rem;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-#roster-table th {
+#roster-table th,
+.roster-tab-table th {
     color: #8b949e;
     font-size: 0.8rem;
     text-transform: uppercase;
@@ -408,6 +396,7 @@ a {
 .screen#screen-dashboard.active {
     flex-direction: column;
     align-items: stretch;
+    justify-content: flex-start;
     padding: 1.5rem 2rem;
 }
 
@@ -474,455 +463,21 @@ a {
     font-size: 1.1rem;
 }
 
-/* ===== Responsive ===== */
-@media (max-width: 768px) {
-    .sport-cards {
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .sport-card {
-        padding: 2rem;
-    }
-
-    .nav-links {
-        gap: 0;
-        overflow-x: auto;
-    }
-
-    .nav-link {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.5rem;
-    }
-
-    .dashboard-tabs {
-        overflow-x: auto;
-    }
-}
-
-/* ===== Reset & Base ===== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #0d1117;
-    color: #e6edf3;
-    min-height: 100vh;
-}
-
-a {
-    color: inherit;
-    text-decoration: none;
-}
-
-/* ===== Utility Classes ===== */
-.hidden {
-    display: none !important;
-}
-
-.error-msg {
-    color: #f85149;
-    font-size: 0.85rem;
-    min-height: 1.2em;
-    margin-bottom: 0.25rem;
-}
-
-/* ===== Buttons ===== */
-.btn {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: filter 0.2s, box-shadow 0.2s;
-}
-
-.btn:hover {
-    filter: brightness(1.15);
-    box-shadow: 0 0 12px rgba(146, 0, 230, 0.4);
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #1309cb, #9200e6);
-    color: #fff;
-}
-
-.btn-primary:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    filter: none;
-    box-shadow: none;
-}
-
-.btn-small {
-    padding: 0.4rem 1rem;
-    font-size: 0.85rem;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #e6edf3;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.btn-google {
-    background: #161b22;
-    color: #e6edf3;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    width: 100%;
-}
-
-/* ===== Nav Bar ===== */
-#nav-bar {
-    display: none;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: #161b22;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 0.75rem 1.5rem;
+/* Roster Tab */
+.roster-tab-header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 1.5rem;
-}
-
-#nav-bar.visible {
-    display: flex;
-}
-
-.nav-brand {
-    font-size: 1.25rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #1309cb, #9200e6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-right: auto;
-}
-
-.nav-links {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.nav-link {
-    padding: 0.4rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    transition: background 0.2s;
-}
-
-.nav-link:hover,
-.nav-link.active {
-    background: rgba(255, 255, 255, 0.08);
-}
-
-/* ===== Screens ===== */
-.screen {
-    display: none;
-    padding: 2rem;
-    min-height: calc(100vh - 52px);
-}
-
-.screen.active {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* ===== Auth Screen ===== */
-.auth-container {
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-}
-
-.logo {
-    font-size: 2.5rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #1309cb, #9200e6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 0.25rem;
-}
-
-.tagline {
-    color: #8b949e;
-    margin-bottom: 2rem;
-}
-
-.subtitle {
-    color: #8b949e;
-    margin-bottom: 1.5rem;
-}
-
-.auth-toggle {
-    display: flex;
-    background: #161b22;
-    border-radius: 8px;
-    padding: 4px;
-    margin-bottom: 1.5rem;
-}
-
-.auth-toggle-btn {
-    flex: 1;
-    padding: 0.5rem;
-    border: none;
-    border-radius: 6px;
-    background: transparent;
-    color: #8b949e;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-}
-
-.auth-toggle-btn.active {
-    background: linear-gradient(135deg, #1309cb, #9200e6);
-    color: #fff;
-}
-
-.auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.auth-form input {
-    padding: 0.75rem 1rem;
-    background: #161b22;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    color: #e6edf3;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.auth-form input:focus {
-    border-color: #9200e6;
-}
-
-.divider {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin: 1.25rem 0;
-    color: #484f58;
-}
-
-.divider::before,
-.divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(255, 255, 255, 0.08);
-}
-
-/* ===== Sport Selection Screen ===== */
-.sport-container {
-    text-align: center;
-}
-
-.sport-cards {
-    display: flex;
-    gap: 2rem;
-    margin-top: 1rem;
-}
-
-.sport-card {
-    background: #161b22;
-    border: 2px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 3rem 4rem;
-    cursor: pointer;
-    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-    text-align: center;
-}
-
-.sport-card:hover {
-    border-color: #9200e6;
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(146, 0, 230, 0.2);
-}
-
-.sport-icon {
-    font-size: 4rem;
-    display: block;
-    margin-bottom: 0.75rem;
-}
-
-.sport-card h3 {
-    font-size: 1.25rem;
-}
-
-/* ===== Team Setup Screen ===== */
-.setup-container {
-    width: 100%;
-    max-width: 600px;
-}
-
-.screen#screen-setup.active {
-    align-items: flex-start;
-    padding-top: 4rem;
-}
-
-.setup-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.setup-form input,
-.setup-form select {
-    padding: 0.75rem 1rem;
-    background: #161b22;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    color: #e6edf3;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.setup-form input:focus,
-.setup-form select:focus {
-    border-color: #9200e6;
-}
-
-.setup-form select option {
-    background: #161b22;
-}
-
-.upload-zone {
-    border: 2px dashed rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
-    padding: 2.5rem;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-}
-
-.upload-zone:hover {
-    border-color: #9200e6;
-    background: rgba(146, 0, 230, 0.05);
-}
-
-.upload-hint {
-    color: #8b949e;
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
-}
-
-/* Roster Preview Table */
-.roster-preview {
-    margin-top: 0.5rem;
-}
-
-.roster-preview h3 {
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-}
-
-#roster-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#roster-table th,
-#roster-table td {
-    padding: 0.5rem 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-#roster-table th {
-    color: #8b949e;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-#roster-table .remove-btn {
-    background: none;
-    border: none;
-    color: #f85149;
-    cursor: pointer;
-    font-size: 1.1rem;
-}
-
-/* ===== Dashboard Screen ===== */
-.screen#screen-dashboard.active {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 1.5rem 2rem;
-}
-
-.dashboard-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
     margin-bottom: 1rem;
 }
 
-.sport-badge {
-    background: linear-gradient(135deg, #1309cb, #9200e6);
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
+.roster-tab-header h3 {
+    font-size: 1.1rem;
 }
 
-.dashboard-tabs {
-    display: flex;
-    gap: 0.25rem;
-    background: #161b22;
-    border-radius: 8px;
-    padding: 4px;
-    margin-bottom: 1.5rem;
-    overflow-x: auto;
-}
-
-.tab-btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 6px;
-    background: transparent;
+.roster-count {
     color: #8b949e;
     font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.2s, color 0.2s;
-}
-
-.tab-btn:hover {
-    color: #e6edf3;
-}
-
-.tab-btn.active {
-    background: linear-gradient(135deg, #1309cb, #9200e6);
-    color: #fff;
-}
-
-.tab-panel {
-    display: none;
-}
-
-.tab-panel.active {
-    display: block;
-}
-
-.empty-state {
-    color: #484f58;
-    text-align: center;
-    padding: 4rem 1rem;
-    font-size: 1.1rem;
 }
 
 /* ===== Responsive ===== */
