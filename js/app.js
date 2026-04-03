@@ -105,7 +105,7 @@ async function loadState() {
     // Try loading from Supabase first
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (user) {
-        const { data } = await supabase
+        const { data } = await supabaseClient
             .from('user_profiles')
             .select('*')
             .eq('id', user.id)
@@ -135,24 +135,57 @@ async function loadState() {
     }
 }
 
+// ===== Handle session and route user to correct screen =====
+async function routeUser() {
+    await loadState();
+
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+        appState.user = session.user.email;
+        if (appState.sport && appState.teamName) {
+            showNav();
+            document.getElementById('dashboard-team-name').textContent = appState.teamName;
+            document.getElementById('dashboard-sport-badge').textContent = appState.sport;
+            showScreen('screen-dashboard');
+        } else {
+            showNav();
+            showScreen('screen-sport');
+        }
+    } else {
+        showScreen('screen-auth');
+    }
+}
+
 // ===== Init on Page Load =====
 document.addEventListener('DOMContentLoaded', async () => {
     initDashboardTabs();
     initLogout();
 
-    await loadState();
+    // Listen for auth state changes (handles OAuth redirect, sign in, sign out)
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+            appState.user = session.user.email;
+            await loadState();
+            appState.user = session.user.email;
+            showNav();
 
-    // If user has an active Supabase session, restore
-    const { data: { session } } = await supabaseClientClient.auth.getSession();
-    if (session && appState.sport && appState.teamName) {
-        showNav();
-        document.getElementById('dashboard-team-name').textContent = appState.teamName;
-        document.getElementById('dashboard-sport-badge').textContent = appState.sport;
-        showScreen('screen-dashboard');
-    } else if (session && appState.user) {
-        showNav();
-        showScreen('screen-sport');
-    } else {
-        showScreen('screen-auth');
-    }
+            if (appState.sport && appState.teamName) {
+                document.getElementById('dashboard-team-name').textContent = appState.teamName;
+                document.getElementById('dashboard-sport-badge').textContent = appState.sport;
+                showScreen('screen-dashboard');
+            } else {
+                showScreen('screen-sport');
+            }
+        } else if (event === 'SIGNED_OUT') {
+            appState = {
+                user: null, sport: null, teamName: '', season: '',
+                roster: [], games: [], opponents: []
+            };
+            hideNav();
+            showScreen('screen-auth');
+        }
+    });
+
+    // Initial route on page load
+    await routeUser();
 });
